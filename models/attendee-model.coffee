@@ -19,8 +19,6 @@ class AttendeeModel
       pusk_id     : pusk_id
       vendor_name : vendor_name
 
-      # { "humans.genders": { $gt: 5 } }
-
     queryOptions['start_time'] = {$gte: moment(startTime).utc().unix()} if startTime?
     queryOptions['end_time']   = {$lte: moment(endTime).utc().unix()} if endTime?
 
