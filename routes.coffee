@@ -1,10 +1,12 @@
 AttendeeController = require './controllers/attendee-controller'
 AttendeeModel      = require './models/attendee-model'
+nedb               = require 'nedb'
 cors               = require 'cors'
 
 class Routes
   constructor: (@app) ->
-    attendeeModel = new AttendeeModel()
+    dataStore = new nedb()
+    attendeeModel = new AttendeeModel dataStore
     @attendeeController = new AttendeeController attendeeModel
       
   register: =>
