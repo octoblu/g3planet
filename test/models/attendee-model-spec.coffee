@@ -68,7 +68,7 @@ describe '->contructor', ->
 
     describe 'when called with a startTime and endTime', ->
       beforeEach ->
-        @callback = sinon.spy()
+        @callback = sinon.stub()
         @project_id = 'gored-then-devoured'
         @pusk_id = 'tracks-pretty-awesome'
         @vendorName = 'something-cold'
@@ -78,11 +78,18 @@ describe '->contructor', ->
           project_id: @project_id
           pusk_id: @pusk_id
           vendor_name: @vendorName
-          start_time: @startTime
-          end_time: @endTime
+          start_time: $gte: moment(@startTime).utc().unix()
+          end_time: $lte: moment(@endTime).utc().unix()
+        @data = 
+          firstName: 'John'
+          lastName: 'Connor'
+        @dataModel.find.yields null, @data
         @sut.getAttendees @project_id, @pusk_id, @vendorName, @startTime, @endTime, @callback
-      it 'should not pass the startTime and endTime to the query options', ->
+      it 'should pass the startTime and endTime to the query options', ->
         expect(@dataModel.find).to.have.been.calledWith @searchQuery
+
+      it 'should return an object with attendees', ->
+        expect(@callback).to.have.been.calledWith null, @data
 
     describe 'when called with a startTime later than endTime', ->
       beforeEach ->
@@ -96,6 +103,7 @@ describe '->contructor', ->
         @sut.getAttendees @project_id, @pusk_id, @vendorName, @startTime, @endTime, @callback
       it 'should call the callback with an error', ->
         expect(@callback).to.have.been.calledWith @error, null
+      
         
         
 

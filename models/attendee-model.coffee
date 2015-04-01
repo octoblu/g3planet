@@ -19,14 +19,20 @@ class AttendeeModel
       pusk_id     : pusk_id
       vendor_name : vendor_name
 
-    queryOptions['start_time'] = startTime if startTime?
-    queryOptions['end_time']   = endTime if endTime?
+      # { "humans.genders": { $gt: 5 } }
+
+    queryOptions['start_time'] = {$gte: moment(startTime).utc().unix()} if startTime?
+    queryOptions['end_time']   = {$lte: moment(endTime).utc().unix()} if endTime?
 
     if moment(startTime).isValid() and moment(endTime).isValid()
       error = new Error @ERROR_INVALID_TIME
       return callback(error, null) if moment(endTime).isBefore(startTime)
     
-    @dataStore.find queryOptions
+
+
+    @dataStore.find queryOptions, (error, data) ->
+      return callback(error, null) if error
+      callback null, data
 
   getAttendeesByBadgeId: (project_id, pusk_id, vendor_name, badgeId , callback=->) =>
     return callback(null, [])
