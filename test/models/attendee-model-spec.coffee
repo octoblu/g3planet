@@ -3,6 +3,7 @@ _ = require 'lodash'
 
 describe '->contructor', ->
   beforeEach ->
+    @dataModel = 
     @sut = new AttendeeModel()
 
   it 'should exist', ->
@@ -46,5 +47,18 @@ describe '->contructor', ->
         @endTime = '2015-02-22 10:10:00-0700'
         @sut.getAttendees @project_id, @pusk_id, @vendorName, @startTime, @endTime, @callback
       it 'should call the callback with an error', ->
+        expect(@callback).to.have.been.calledWith @error
+
+    xdescribe 'when called without a start_time', ->
+      beforeEach ->
+        @error = new Error "Vendor Name required"
+        @callback = sinon.spy()
+        @project_id = 'candy'
+        @pusk_id = 'parasites'
+        @vendorName = 'cake'
+        @startTime = undefined
+        @endTime = '2015-02-22 10:10:00-0700'
+        @sut.getAttendees @project_id, @pusk_id, @vendorName, @startTime, @endTime, @callback
+      it 'should use the oldest timestamp available', ->
         expect(@callback).to.have.been.calledWith @error
     
