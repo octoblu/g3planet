@@ -1,0 +1,26 @@
+id: g3planet-green-controller
+kind: ReplicationController
+apiVersion: v1beta1
+labels:
+  name: g3planet-green
+  version: "$SHORT_COMMIT"
+desiredState:
+  replicas: 2
+  replicaSelector:
+    name: g3planet-green
+    version: "$SHORT_COMMIT"
+  podTemplate:
+    labels:
+      name: g3planet-green
+      app: g3planet-green
+      version: "$SHORT_COMMIT"
+    desiredState:
+      manifest:
+        version: v1beta1
+        id: g3planet-green
+        containers:
+          - name: g3planet-green
+            image: octoblu/g3planet:$SHORT_COMMIT
+            ports:
+              - containerPort: 9000
+
