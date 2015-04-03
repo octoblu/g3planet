@@ -6,7 +6,7 @@ cors         = require 'cors'
 Routes       = require './routes'
 debug        = require('debug') 'g3planet:server'
 
-port = process.env.G3PLANET_API_PORT ? 3333
+port = process.env.G3PLANET_API_PORT ? 9000
 
 app = express()
 app.use morgan('dev')
