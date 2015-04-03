@@ -15,13 +15,15 @@ env:
   - DEPLOY_BUCKET=octoblu-deploy
   - DEPLOYMENT_GROUP=master
   - DEPLOY_KEY=g3planet/g3planet-$TRAVIS_COMMIT.zip
+  - secure: IFQrNsNhL+LJSvNk60K05iieIDkkRXuPUehhpyF9DPBtMQ1f1zFgLa5P2l1YF/fcdupqj8PEYIO4eSwwsSnyoFYrHaxqVv05QWj8TkLQ7dl7FpaYH4juj3NmdA0TX0pmLWnagNvv6TgojIPsYnYGiz8SeropSyw/Knc62HE41OU=
+  - secure: DF+1a6KfNxJtA6ihvDuWBPqmHUj0qrx0bC1k8SmK7btga5JSZQi6ngiy0eCJIem1A3kZLT/erStkB17rSg5BYzWvZyjsdd0vLwdEUr0zlY87AGiNCzpGNX1ZJYcXwFmmbXw1kFZDm+7sIZ1t+o7Qx25+4K08FjXByFFiUhftfjo=
 after_success:
 - .kubernetes/travis_after_success
 deploy:
 - provider: s3
   access_key_id: AKIAIT4X4NDGM2WVL6VA
   secret_access_key: &1
-    secure: 
+    secure: DWScBeUzBpOFq9zRqmHVWnV5jNboq9nHL26f8vnJN1CAq4y9abSzXSvYRVGhdsjLUW2jnAjA9K3nIdLfPw9XuOOwnqg6BVjDPcChjx07wSBm9i1FSD79KHXy7zqbvRVGRyecGiMnFpGy6tqelfllSLOYJdkQkxTJhVBRYq8a3zM=
   local_dir: dpl_cd_upload
   skip_cleanup: true
   bucket: octoblu-deploy
