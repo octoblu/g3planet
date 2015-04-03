@@ -4,6 +4,7 @@ errorHandler = require 'errorhandler'
 bodyParser   = require 'body-parser'
 cors         = require 'cors'
 Routes       = require './routes'
+debug        = require('debug') 'g3planet:server'
 
 port = process.env.G3PLANET_API_PORT ? 3333
 

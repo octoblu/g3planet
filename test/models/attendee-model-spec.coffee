@@ -18,7 +18,7 @@ describe '->contructor', ->
         @endTime = undefined
         @searchQuery = 
         { $and : [
-          {'update_timestamp': {$lte: moment().utc().unix()}}
+          {'update_timestamp': {$lte: moment().utc().toDate()}}
           ]}
         @sut.getAttendees @startTime, @endTime, @callback
       it 'should not pass the startTime and endTime to the query options', ->
@@ -27,12 +27,12 @@ describe '->contructor', ->
     describe 'when called with a startTime and endTime', ->
       beforeEach ->
         @callback = sinon.stub()
-        @startTime = '2015-02-22 10:00:00-0700'
-        @endTime = '2015-02-22 11:00:00-0700'
+        @startTime = moment().utc().format()
+        @endTime = moment().add(3, 'h').utc().format()
         @searchQuery = 
          { $and : [
-          {'update_timestamp': { $gte: moment(@startTime).utc().unix()}}
-          {'update_timestamp': {$lte: moment(@endTime).utc().unix()}}
+          {'update_timestamp': { $gte: moment(@startTime).utc().toDate()}}
+          {'update_timestamp': {$lte: moment(@endTime).utc().toDate()}}
           ]}
           
         @data = 

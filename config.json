@@ -1,0 +1,8 @@
+{
+  "project_id" : "synergyorlando2015",
+  "pusk_id": "ecbe70a2-22b7-4d9a-896f-060acb2ffc0c",
+  "api_version": "1",
+  "vendor_name" : "Octoblu",
+  "output_fieldset" :"demographics",
+  "output_format" : "JSON"
+}
