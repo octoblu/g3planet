@@ -1,5 +1,6 @@
-AttendeeController = require './controllers/attendee-controller'
-AttendeeModel      = require './models/attendee-model'
+AttendeeController       = require './controllers/attendee-controller'
+BetterAttendeeController = require './controllers/v2/attendee-controller'
+AttendeeModel            = require './models/attendee-model'
 Datastore          = require 'nedb'
 db                 = new Datastore {filename : './data/attendee.db', autoload: true}
 cors               = require 'cors'
@@ -8,6 +9,7 @@ class Routes
   constructor: (@app) ->
     attendeeModel = new AttendeeModel db
     @attendeeController = new AttendeeController attendeeModel
+    @betterAttendeeController = new BetterAttendeeController attendeeModel
 
   register: =>
     @app.options '*', cors()
@@ -15,6 +17,10 @@ class Routes
     @app.post '/attendees', @attendeeController.getAttendees
     @app.get '/attendee/badge/:id', @attendeeController.getAttendeeByBadgeId
     @app.get '/attendee/registration/:id', @attendeeController.getAttendeeByRegId
+
+    @app.get '/v2/attendees', @betterAttendeeController.getAttendees
+    @app.get '/v2/attendees/badges/:id', @betterAttendeeController.getAttendeeByBadgeId
+    @app.get '/v2/attendees/registrations/:id', @betterAttendeeController.getAttendeeByRegId
 
 
 module.exports = Routes

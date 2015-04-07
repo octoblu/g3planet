@@ -39,7 +39,7 @@ class AttendeeController
 
       return res.status(200).send result unless error?
 
-       
+
 
   getAttendeeByRegId: (req, res) =>
     console.log 'AttendeeController.getAttendeeByRegId called', req
@@ -56,6 +56,6 @@ class AttendeeController
         }
       }
       return res.status(200).send result unless error?
-      
+
 
 module.exports = AttendeeController
