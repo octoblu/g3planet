@@ -23,10 +23,10 @@ REPLACE_REGEX='s;(\\*)(\$([a-zA-Z_][a-zA-Z_0-9]*)|\$\{([a-zA-Z_][a-zA-Z_0-9]*)\}
 perl -pe $REPLACE_REGEX $SCRIPT_DIR/g3planet-blue-service.yaml.tmpl > $SCRIPT_DIR/g3planet-blue-service.yaml
 perl -pe $REPLACE_REGEX $SCRIPT_DIR/g3planet-green-service.yaml.tmpl > $SCRIPT_DIR/g3planet-green-service.yaml
 
-# Always create both services
-kubectl create -f $SCRIPT_DIR/g3planet-green-service.yaml
-kubectl create -f $SCRIPT_DIR/g3planet-blue-service.yaml
+kubectl delete -f $SCRIPT_DIR/g3planet-${NEW_COLOR}-service.yaml
+kubectl create -f $SCRIPT_DIR/g3planet-${NEW_COLOR}-service.yaml
 
+kubectl stop rc -lname=g3planet-${NEW_COLOR}
 kubectl delete rc -lname=g3planet-${NEW_COLOR}
 kubectl delete pods -lname=g3planet-${NEW_COLOR}
 kubectl create -f $SCRIPT_DIR/g3planet-${NEW_COLOR}-controller.yaml
