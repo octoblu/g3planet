@@ -41,6 +41,8 @@ desiredState:
             value: $AWS_ACCESS_KEY_ID
           - name: AWS_SECRET_ACCESS_KEY
             value: $AWS_SECRET_ACCESS_KEY
+          - name: SKIP_CLEAN
+            value: true
     volumes:
       - name: docker-sock
         source:
