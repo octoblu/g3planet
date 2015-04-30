@@ -1,0 +1,6 @@
+{
+  "elb-name": "g3planet-octoblu-com",
+  "application-name": "g3planet",
+  "deployment-group": "master",
+  "s3-bucket": "octoblu-deploy"
+}
