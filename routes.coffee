@@ -1,9 +1,15 @@
 AttendeeController       = require './controllers/attendee-controller'
 BetterAttendeeController = require './controllers/v2/attendee-controller'
 AttendeeModel            = require './models/attendee-model'
-Datastore          = require 'nedb'
-db                 = new Datastore {filename : './data/attendee.db', autoload: true}
-cors               = require 'cors'
+Datastore = require 'nedb'
+cors      = require 'cors'
+
+if process.env.MONGODB_URI?
+  mongo     = require 'mongojs'
+  mongodb   = mongo(process.env.MONGODB_URI, ['attendees'])
+  db = mongodb.attendees
+else
+  db = new Datastore {filename : './data/attendee.db', autoload: true}
 
 class Routes
   constructor: (@app) ->

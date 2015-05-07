@@ -4,7 +4,7 @@ class AttendeeController
   constructor: (@attendeeModel) ->
 
   getAttendees: (req, res) =>
-    @attendeeModel.getAttendees null, null, (error,attendees) =>
+    @attendeeModel.getAllAttendees (error, attendees) =>
       return res.status(500).send {error: 'Server Error'} if error?
 
       res.send attendees

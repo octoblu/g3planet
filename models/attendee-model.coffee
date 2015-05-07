@@ -21,11 +21,13 @@ class AttendeeModel
     queryArray.push({'update_timestamp' : {$lte:  moment(endTime).toDate()}}) if endTime?
     queryArray.push({'update_timestamp' : {$lte:  moment().toDate()}}) unless endTime?
 
-
     @dataModel.find {$and : queryArray}, (error, data) ->
       debug data
       return callback(error, null) if error
       callback null, data
+
+  getAllAttendees: (callback=->) =>
+    @dataModel.find {}, callback
 
   getAttendeeByBadgeId: (badgeId , callback=->) =>
     return callback(new Error @ERROR_NO_BADGE_ID, null) unless badgeId
