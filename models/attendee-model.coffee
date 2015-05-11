@@ -15,7 +15,7 @@ class AttendeeModel
   constructor : (@dataModel, dependencies={}) ->
     moment = dependencies.moment ? require 'moment'
     request = dependencies.request ? require 'request'
-    @pusk_id = dependencies.pusk_id ? process.env.pusk_id
+    @pusk_id = dependencies.pusk_id ? process.env.PUSK_ID
 
   getAttendees: (startTime, endTime, callback=->) =>
     if moment(startTime).isValid() and moment(endTime).isValid()
@@ -48,7 +48,9 @@ class AttendeeModel
           callback = ->
       two: (cb=->) =>
         request @requestBadgeIdParams(badgeId), (error, response, body) =>
+          console.log body
           return cb null, error if error?
+          body = JSON.parse body
           return cb null, new Error('Record not found.') if _.isEmpty body?.attendee_data?.attendees
           callback null, body.attendee_data.attendees
           callback = ->
@@ -70,6 +72,7 @@ class AttendeeModel
       two: (cb=->) =>
         request @requestRegIdParams(registrationId), (error, response, body) =>
           return cb null, error if error?
+          body = JSON.parse body
           return cb null, new Error('Record not found.') if _.isEmpty body?.attendee_data?.attendees
           callback null, body.attendee_data.attendees
           callback = ->
@@ -80,6 +83,7 @@ class AttendeeModel
 
   requestBadgeIdParams: (badgeId) =>
     url: @G2_URL
+    method: 'POST'
     form:
       badge_id: badgeId
       pusk_id: @pusk_id
@@ -93,6 +97,7 @@ class AttendeeModel
 
   requestRegIdParams: (registrationId) =>
     url: @G2_URL
+    method: 'POST'
     form:
       reg_id: registrationId
       pusk_id: @pusk_id

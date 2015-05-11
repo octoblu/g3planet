@@ -86,6 +86,7 @@ describe '->contructor', ->
       it 'should call request with the correct parameters', ->
         expect(@request).to.have.been.calledWith {
           url: 'https://citrix.g2planet.com/synergyorlando2015/api_attendee_updates'
+          method: 'POST'
           form:
             project_id: 'synergyorlando2015'
             api_version: 1
@@ -111,7 +112,7 @@ describe '->contructor', ->
 
         describe 'when the request yields a result', ->
           beforeEach ->
-            @request.yield null, {}, attendee_data: {num_records: 12, attendees: [{firstName: 'F', lastName: 'Sharp'}]}
+            @request.yield null, {}, JSON.stringify(attendee_data: {num_records: 12, attendees: [{firstName: 'F', lastName: 'Sharp'}]})
 
           it 'should call the callback with the result', ->
             expect(@result).to.deep.equal [{firstName: 'F', lastName: 'Sharp'}]
@@ -142,6 +143,7 @@ describe '->contructor', ->
       it 'should call request with the correct parameters', ->
         expect(@request).to.have.been.calledWith {
           url: 'https://citrix.g2planet.com/synergyorlando2015/api_attendee_updates'
+          method: 'POST'
           form:
             project_id: 'synergyorlando2015'
             api_version: 1
@@ -167,7 +169,7 @@ describe '->contructor', ->
 
         describe 'when the request yields a result', ->
           beforeEach ->
-            @request.yield null, {}, attendee_data: {num_records: 12, attendees: [{firstName: 'F', lastName: 'Sharp'}]}
+            @request.yield null, {}, JSON.stringify(attendee_data: {num_records: 12, attendees: [{firstName: 'F', lastName: 'Sharp'}]})
 
           it 'should yield the result', ->
             expect(@result).to.deep.equal [{firstName: 'F', lastName: 'Sharp'}]
