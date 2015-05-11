@@ -34,7 +34,7 @@ class AttendeeModel
 
     queryOptions =
       badge_ids:
-        $in: [badgeId]
+        $in: [("" + badgeId).toUpperCase()]
 
     @dataModel.find queryOptions, (error, data) ->
       return callback(error, null) if error

@@ -80,11 +80,12 @@ describe '->contructor', ->
     describe 'when called with a valid badgeId', ->
       beforeEach ->
         @callback = sinon.stub()
-        @badgeId = 5678
+        @badgeId = 'a2e4'
         @searchQuery =
           badge_ids:
-            $in: [@badgeId]
+            $in: ['A2E4']
         @sut.getAttendeeByBadgeId @badgeId, @callback
+
       it 'should call dataModel.find with the correct query properties', ->
         expect(@dataModel.find).to.have.been.calledWith @searchQuery
 
