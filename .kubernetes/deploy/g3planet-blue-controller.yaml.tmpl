@@ -23,4 +23,6 @@ desiredState:
             image: octoblu/g3planet:$SHORT_COMMIT
             ports:
               - containerPort: 9000
-
+            env:
+              - key: MONGODB_URI
+              - value: $MONGODB_URI
