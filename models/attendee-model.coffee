@@ -34,7 +34,7 @@ class AttendeeModel
 
     queryOptions =
       badge_ids:
-        $in: [badge_id: badgeId]
+        $in: [badgeId]
 
     @dataModel.find queryOptions, (error, data) ->
       return callback(error, null) if error

@@ -83,7 +83,7 @@ describe '->contructor', ->
         @badgeId = 5678
         @searchQuery =
           badge_ids:
-            $in: [badge_id: @badgeId]
+            $in: [@badgeId]
         @sut.getAttendeeByBadgeId @badgeId, @callback
       it 'should call dataModel.find with the correct query properties', ->
         expect(@dataModel.find).to.have.been.calledWith @searchQuery
@@ -143,11 +143,3 @@ describe '->contructor', ->
           @sut.getAttendeeByRegId @regId, @callback
         it 'should call the callback with the data', ->
           expect(@callback).to.have.been.calledWith null, @data
-
-
-
-
-
-
-
-
