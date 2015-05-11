@@ -44,7 +44,7 @@ class AttendeeModel
     return callback(new Error @ERROR_NO_REG_ID, null) unless registrationId
 
     queryOptions =
-      reg_id      : registrationId
+      reg_id      : ("" + registrationId).toUpperCase()
 
     @dataModel.find queryOptions, (error, data) ->
       return callback(error, null) if error

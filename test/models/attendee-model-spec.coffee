@@ -120,9 +120,9 @@ describe '->contructor', ->
     describe 'when called with a valid registrationId', ->
       beforeEach ->
         @callback = sinon.spy()
-        @regId = 1337
+        @regId = "ksdjf234"
         @searchQuery =
-          reg_id: @regId
+          reg_id: "KSDJF234"
         @sut.getAttendeeByRegId @regId, @callback
       it 'should call dataModel.find with the correct search parameters', ->
         expect(@dataModel.find).to.have.been.calledWith @searchQuery
