@@ -43,16 +43,18 @@ class AttendeeModel
       one: (cb=->) =>
         @dataModel.find badge_ids: $in: [badgeId], (error, data) ->
           return cb null, error if error?
+          return cb null, new Error('Record not found.') if _.isEmpty data
           callback null, data
           callback = ->
       two: (cb=->) =>
         request @requestBadgeIdParams(badgeId), (error, response, body) =>
           return cb null, error if error?
+          return cb null, new Error('Record not found.') if _.isEmpty body?.attendee_data?.attendees
           callback null, body.attendee_data.attendees
           callback = ->
     , (error, errors) =>
       return callback error if error?
-      callback new Error 'unknown error'
+      callback new Error 'Record not found.'
 
   getAttendeeByRegId: (registrationId , callback=->) =>
     return callback(new Error @ERROR_NO_REG_ID, null) unless registrationId
@@ -62,11 +64,13 @@ class AttendeeModel
       one: (cb=->) =>
         @dataModel.find reg_id: registrationId, (error, data) ->
           return cb null, error if error?
+          return cb null, new Error('Record not found.') if _.isEmpty data
           callback null, data
           callback = ->
       two: (cb=->) =>
         request @requestRegIdParams(registrationId), (error, response, body) =>
           return cb null, error if error?
+          return cb null, new Error('Record not found.') if _.isEmpty body?.attendee_data?.attendees
           callback null, body.attendee_data.attendees
           callback = ->
     , (error, errors) =>
