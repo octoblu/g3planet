@@ -1,15 +1,21 @@
 _      = require 'lodash'
+async  = require 'async'
 debug = require('debug') 'g3planet:AttendeeModel'
 
 moment = null
+request = null
 
 @ERROR_NO_BADGE_ID    = 'Badge ID required'
 @ERROR_NO_REG_ID      = 'Registration ID required'
 @ERROR_INVALID_TIME   = 'Invalid Date Range. Start time cannot be later than end time.'
 
 class AttendeeModel
+  G2_URL: 'https://citrix.g2planet.com/synergyorlando2015/api_attendee_updates'
+
   constructor : (@dataModel, dependencies={}) ->
     moment = dependencies.moment ? require 'moment'
+    request = dependencies.request ? require 'request'
+    @pusk_id = dependencies.pusk_id ? process.env.pusk_id
 
   getAttendees: (startTime, endTime, callback=->) =>
     if moment(startTime).isValid() and moment(endTime).isValid()
@@ -31,24 +37,68 @@ class AttendeeModel
 
   getAttendeeByBadgeId: (badgeId , callback=->) =>
     return callback(new Error @ERROR_NO_BADGE_ID, null) unless badgeId
+    badgeId = ("" + badgeId).toUpperCase()
 
-    queryOptions =
-      badge_ids:
-        $in: [("" + badgeId).toUpperCase()]
-
-    @dataModel.find queryOptions, (error, data) ->
-      return callback(error, null) if error
-      callback null, data
+    async.parallel
+      one: (cb=->) =>
+        @dataModel.find badge_ids: $in: [badgeId], (error, data) ->
+          return cb null, error if error?
+          callback null, data
+          callback = ->
+      two: (cb=->) =>
+        request @requestBadgeIdParams(badgeId), (error, response, body) =>
+          return cb null, error if error?
+          callback null, body.attendee_data.attendees
+          callback = ->
+    , (error, errors) =>
+      return callback error if error?
+      callback errors
 
   getAttendeeByRegId: (registrationId , callback=->) =>
     return callback(new Error @ERROR_NO_REG_ID, null) unless registrationId
+    registrationId = ("" + registrationId).toUpperCase()
 
-    queryOptions =
-      reg_id      : ("" + registrationId).toUpperCase()
+    async.parallel
+      one: (cb=->) =>
+        @dataModel.find reg_id: registrationId, (error, data) ->
+          return cb null, error if error?
+          callback null, data
+          callback = ->
+      two: (cb=->) =>
+        request @requestRegIdParams(registrationId), (error, response, body) =>
+          return cb null, error if error?
+          callback null, body.attendee_data.attendees
+          callback = ->
+    , (error, errors) =>
+      return callback error if error?
+      callback errors
 
-    @dataModel.find queryOptions, (error, data) ->
-      return callback(error, null) if error
-      callback null, data
+
+  requestBadgeIdParams: (badgeId) =>
+    url: @G2_URL
+    form:
+      badge_id: badgeId
+      pusk_id: @pusk_id
+      project_id: 'synergyorlando2015'
+      api_version: 1
+      vendor_name: 'XpoDigital'
+      output_field_set: 'demographic'
+      beginning_time_stamp: '2015-04-01 00:00:00'
+      end_time_stamp: '2015-06-01 00:00:00'
+      output_format: 'json'
+
+  requestRegIdParams: (registrationId) =>
+    url: @G2_URL
+    form:
+      reg_id: registrationId
+      pusk_id: @pusk_id
+      project_id: 'synergyorlando2015'
+      api_version: 1
+      vendor_name: 'XpoDigital'
+      output_field_set: 'demographic'
+      beginning_time_stamp: '2015-04-01 00:00:00'
+      end_time_stamp: '2015-06-01 00:00:00'
+      output_format: 'json'
 
 
 module.exports = AttendeeModel

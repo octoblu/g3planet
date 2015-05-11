@@ -35,8 +35,6 @@ class AttendeeController
 
       return res.status(200).send result unless error?
 
-
-
   getAttendeeByRegId: (req, res) =>
     @attendeeModel.getAttendeeByRegId req.params.id, (error, attendees) =>
       return res.status(400).send error.message  if error?.message

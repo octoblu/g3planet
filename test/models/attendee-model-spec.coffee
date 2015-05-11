@@ -9,7 +9,8 @@ describe '->contructor', ->
     @isValid = sinon.stub()
     @isBefore = sinon.stub()
     @moment = => toDate: @toDate, isValid: @isValid, isBefore: @isBefore
-    @sut = new AttendeeModel @dataModel, {moment: @moment}
+    @request = sinon.stub()
+    @sut = new AttendeeModel @dataModel, moment: @moment, request: @request, pusk_id: '123'
 
   it 'should exist', ->
     expect(@sut).to.exist
@@ -70,77 +71,99 @@ describe '->contructor', ->
   describe '-> getAttendeeByBadgeId', ->
     describe 'when called without a badgeId', ->
       beforeEach ->
-        @error = new Error "Badge ID required"
-        @callback = sinon.spy()
-        @badgeId = undefined
-        @sut.getAttendeeByBadgeId @badgeId, @callback
+        @sut.getAttendeeByBadgeId undefined, (@error) =>
+
       it 'should call the callback with an error', ->
-        expect(@callback).to.have.been.calledWith @error
+        expect(@error).to.deep.equal new Error "Badge ID required"
 
     describe 'when called with a valid badgeId', ->
       beforeEach ->
-        @callback = sinon.stub()
-        @badgeId = 'a2e4'
-        @searchQuery =
-          badge_ids:
-            $in: ['A2E4']
-        @sut.getAttendeeByBadgeId @badgeId, @callback
+        @sut.getAttendeeByBadgeId 'a2e4', (@error, @result) =>
 
       it 'should call dataModel.find with the correct query properties', ->
-        expect(@dataModel.find).to.have.been.calledWith @searchQuery
+        expect(@dataModel.find).to.have.been.calledWith badge_ids: {$in: ['A2E4']}
+
+      it 'should call request with the correct parameters', ->
+        expect(@request).to.have.been.calledWith {
+          url: 'https://citrix.g2planet.com/synergyorlando2015/api_attendee_updates'
+          form:
+            project_id: 'synergyorlando2015'
+            api_version: 1
+            vendor_name: 'XpoDigital'
+            output_field_set: 'demographic'
+            beginning_time_stamp: '2015-04-01 00:00:00'
+            end_time_stamp: '2015-06-01 00:00:00'
+            output_format: 'json'
+            pusk_id: '123'
+            badge_id: 'A2E4'
+        }
 
       describe 'when the database resolves', ->
         beforeEach ->
-          @data =
-            firstName: 'Kyle'
-            lastName: 'Reese'
-          @dataModel.find.yields null, @data
-          @sut.getAttendeeByBadgeId  @badgeId, @callback
+          @dataModel.find.yield null, firstName: 'Kyle', lastName: 'Reese'
+
         it 'should call the callback with the data', ->
-          expect(@callback).to.have.been.calledWith null, @data
+          expect(@result).to.deep.equal firstName: 'Kyle', lastName: 'Reese'
 
       describe 'when the database returns an error', ->
         beforeEach ->
-          @dataModel.find.yields(new Error('ERRRRRRR'), null)
-          @sut.getAttendeeByBadgeId @badgeId, @callback
-        it 'should call the callback with the error', ->
-          expect(@callback).to.have.been.calledWith new Error('ERRRRRRR'), null
+          @dataModel.find.yield new Error('ERRRRRRR')
 
+        describe 'when the request yields a result', ->
+          beforeEach ->
+            @request.yield null, {}, attendee_data: {num_records: 12, attendees: [{firstName: 'F', lastName: 'Sharp'}]}
+
+          it 'should call the callback with the result', ->
+            expect(@result).to.deep.equal [{firstName: 'F', lastName: 'Sharp'}]
 
   describe '-> getAttendeeByRegId', ->
     describe 'when called without a registrationId', ->
       beforeEach ->
-        @error = new Error "Registration ID required"
-        @callback = sinon.spy()
-        @regId = undefined
-        @sut.getAttendeeByRegId @regId, @callback
+        @sut.getAttendeeByRegId undefined, (@error) =>
+
       it 'should call the callback with an error', ->
-        expect(@callback).to.have.been.calledWith @error
+        expect(@error).to.deep.equal new Error "Registration ID required"
 
     describe 'when called with a valid registrationId', ->
       beforeEach ->
-        @callback = sinon.spy()
-        @regId = "ksdjf234"
-        @searchQuery =
-          reg_id: "KSDJF234"
-        @sut.getAttendeeByRegId @regId, @callback
+        @callback = sinon.spy (@error, @result) =>
+        @sut.getAttendeeByRegId 'ksdjf234', @callback
+
       it 'should call dataModel.find with the correct search parameters', ->
-        expect(@dataModel.find).to.have.been.calledWith @searchQuery
+        expect(@dataModel.find).to.have.been.calledWith reg_id: "KSDJF234"
 
-      describe 'when the database returns with an error', ->
-        beforeEach ->
-          @dataModel.find.yields(new Error('ERRORERROR'), null)
-          @sut.getAttendeeByRegId @regId, @callback
-        it 'should call the callback with the error', ->
-          expect(@callback).to.have.been.calledWith new Error('ERRORERROR'), null
-
+      it 'should call request with the correct parameters', ->
+        expect(@request).to.have.been.calledWith {
+          url: 'https://citrix.g2planet.com/synergyorlando2015/api_attendee_updates'
+          form:
+            project_id: 'synergyorlando2015'
+            api_version: 1
+            vendor_name: 'XpoDigital'
+            output_field_set: 'demographic'
+            beginning_time_stamp: '2015-04-01 00:00:00'
+            end_time_stamp: '2015-06-01 00:00:00'
+            output_format: 'json'
+            pusk_id: '123'
+            reg_id: 'KSDJF234'
+        }
 
       describe 'when the database returns with the data', ->
         beforeEach ->
-          @data =
-            firstName: 'T'
-            lastName: 'Rex'
-          @dataModel.find.yields(null, @data)
-          @sut.getAttendeeByRegId @regId, @callback
-        it 'should call the callback with the data', ->
-          expect(@callback).to.have.been.calledWith null, @data
+          @dataModel.find.yield null, firstName: 'T', lastName: 'Rex'
+
+        it 'should yield the data', ->
+          expect(@result).to.deep.equal firstName: 'T', lastName: 'Rex'
+
+      describe 'when the database returns with an error', ->
+        beforeEach ->
+          @dataModel.find.yield new Error('ERRORERROR')
+
+        describe 'when the request yields a result', ->
+          beforeEach ->
+            @request.yield null, {}, attendee_data: {num_records: 12, attendees: [{firstName: 'F', lastName: 'Sharp'}]}
+
+          it 'should yield the result', ->
+            expect(@result).to.deep.equal [{firstName: 'F', lastName: 'Sharp'}]
+
+          it 'should only have called the callback once', ->
+            expect(@callback).to.have.been.calledOnce
