@@ -116,6 +116,13 @@ describe '->contructor', ->
           it 'should call the callback with the result', ->
             expect(@result).to.deep.equal [{firstName: 'F', lastName: 'Sharp'}]
 
+        describe 'when the request yields an error', ->
+          beforeEach ->
+            @request.yield new Error 'oops'
+
+          it 'should call the callback with an unknown error', ->
+            expect(@error).to.deep.equal new Error 'unknown error'
+
   describe '-> getAttendeeByRegId', ->
     describe 'when called without a registrationId', ->
       beforeEach ->

@@ -52,7 +52,7 @@ class AttendeeModel
           callback = ->
     , (error, errors) =>
       return callback error if error?
-      callback errors
+      callback new Error 'unknown error'
 
   getAttendeeByRegId: (registrationId , callback=->) =>
     return callback(new Error @ERROR_NO_REG_ID, null) unless registrationId
@@ -71,7 +71,7 @@ class AttendeeModel
           callback = ->
     , (error, errors) =>
       return callback error if error?
-      callback errors
+      callback new Error 'unknown error'
 
 
   requestBadgeIdParams: (badgeId) =>
